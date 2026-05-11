@@ -1,0 +1,9 @@
+{
+  "name": "testcase-generate-plugin",
+  "version": "1.0.0",
+  "description": "Test case generation workflow plugin for OpenCode",
+  "main": ".opencode/plugins/testDesigner.js",
+  "type": "module",
+  "keywords": ["opencode", "plugin", "test-design", "test-case-generation"],
+  "license": "MIT"
+}

@@ -1,69 +1,60 @@
-# Test Case Generation Plugin for OpenCode
+# Test Case Generation Plugin
 
-## Overview
-
-This plugin provides a comprehensive test case generation workflow that transforms design documents (Word or Markdown) into structured test cases.
+A plugin for test case generation with workflow agents: requirement analysis, test requirement analysis, and test design.
 
 ## Structure
 
 ```
 testcase-generate-plugin/
-├── .opencode/
-│   └── plugins/
-│       └── testDesigner.js      # Plugin entry point
+├── .opencode/plugins/
+│   └── testDesigner.js          # OpenCode plugin entry point
+├── .claude-plugin/
+│   └── plugin.json              # Claude Code plugin metadata
+├── .claude-code/hooks/          # Claude Code hooks
+│   ├── hooks.json
+│   ├── run-hook.cmd
+│   └── session-start
 ├── skills/
-│   └── testcase-generate-workflow/
-│       └── SKILL.md             # Main workflow skill
-└── package.json                 # Package configuration
+│   ├── test-req-preprocessor/   # Agent: Requirement Analysis
+│   │   └── SKILL.md
+│   ├── test-requirement-analyst/ # Agent: Test Requirement Analysis
+│   │   └── SKILL.md
+│   └── test-design-expert/      # Agent: Test Design
+│       └── SKILL.md
+├── package.json
+└── README.md
 ```
 
 ## Installation
 
-### Option 1: Local Installation
+### OpenCode
 
-Reference the plugin in your `opencode.json`:
-
-```json
-{
-  "plugin": ["testcase-generate-plugin@file:///home/admin/workspace/cc_project/testcase-generate-plugin"]
-}
-```
-
-### Option 2: Git Installation
+Add to `~/.config/opencode/opencode.json`:
 
 ```json
 {
-  "plugin": ["testcase-generate-plugin@git+https://github.com/your-repo/testcase-generate-plugin.git"]
+  "plugin": ["testcase-generate-plugin@file:///path/to/testcase-generate-plugin"]
 }
 ```
 
-## Workflow
+### Claude Code
 
-The plugin implements a three-phase workflow:
+```bash
+ln -s /path/to/testcase-generate-plugin ~/.claude/plugins/testcase-generate-plugin
+```
 
-1. **Requirement Analysis** - Preprocess and analyze design documents
-2. **Test Requirement Analysis** - Extract feature and implementation atomic capabilities
-3. **Test Design** - Generate logical and interface test cases
+## Agents
 
-See `skills/testcase-generate-workflow/SKILL.md` for detailed workflow documentation.
+| Agent | Phase | Description |
+|-------|-------|-------------|
+| test-req-preprocessor | Phase 1 | Requirement analysis - 7 steps |
+| test-requirement-analyst | Phase 2 | Test requirement analysis - 2 parallel branches |
+| test-design-expert | Phase 3 | Test design - 2 parallel branches |
 
-## Supported Skills
+## Usage
 
-| Skill | Purpose |
-|-------|---------|
-| requirement-document-preprocessor | Format requirement documents |
-| mece-decomposition | Customer problem identification |
-| 5w2h-analysis | 5W2H analysis |
-| term-dictionary | Terminology replacement |
-| rule-split | Rule extraction |
-| usecase-extraction | Usecase extraction |
-| usecase-rule-matcher | Match usecases with rules |
-| feature-tree-atomic-extraction | Feature atomic extraction |
-| feature-atomic-ibo-filler | IBO filling for features |
-| implementation-atomic-capability-extractor | Implementation atomic extraction |
-| interface-ibo-filler | IBO filling for interfaces |
-| feature-atomic-capability-testpoint-generation | Generate logical testpoints |
-| interface-testpoint-generation | Generate interface testpoints |
-| testpoint-to-testcase | Convert testpoints to testcases |
-| logic-testcase-to-excel | Export logical testcases to Excel |
-| interface-testcase-to-excel | Export interface testcases to Excel |
+After installation, use the `skill` tool to load specific workflow skills:
+
+- `test-req-preprocessor` - Requirement analysis workflow
+- `test-requirement-analyst` - Test requirement analysis workflow
+- `test-design-expert` - Test design workflow

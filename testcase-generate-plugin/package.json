@@ -5,5 +5,8 @@
   "main": ".opencode/plugins/testDesigner.js",
   "type": "module",
   "keywords": ["opencode", "plugin", "test-design", "test-case-generation"],
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "install": "bash install.sh"
+  }
 }

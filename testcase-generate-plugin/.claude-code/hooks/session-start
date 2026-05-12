@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# SessionStart hook for testcase-generate-plugin
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+escape_for_json() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    s="${s//$'\n'/\\n}"
+    s="${s//$'\r'/\\r}"
+    s="${s//$'\t'/\\t}"
+    printf '%s' "$s"
+}
+
+bootstrap_message="**TESTCASE_GENERATE_WORKFLOW**
+Available agents for test case generation:
+- test-req-preprocessor: Requirement analysis workflow
+- test-requirement-analyst: Test requirement analysis workflow
+- test-design-expert: Test design workflow
+
+Use the \`skill\` tool to load specific workflow skills."
+
+bootstrap_escaped=$(escape_for_json "$bootstrap_message")
+session_context="<EXTREMELY_IMPORTANT>\n${bootstrap_escaped}\n</EXTREMELY_IMPORTANT>"
+
+if [ -n "${CURSOR_PLUGIN_ROOT:-}" ]; then
+  printf '{\n  "additional_context": "%s"\n}\n' "$session_context"
+elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ -z "${COPILOT_CLI:-}" ]; then
+  printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$session_context"
+else
+  printf '{\n  "additionalContext": "%s"\n}\n' "$session_context"
+fi
+
+exit 0
